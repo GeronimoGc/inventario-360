@@ -1,0 +1,403 @@
+codgio para validacion de login todos los archivos 
+
+
+// admin/users/index.php (o cualquier página protegida)
+
+session_start(); // Inicia la sesión PHP
+
+define('PROTECT_CONFIG', true); // Bandera para proteger la inclusión de archivos de configuración
+
+// --- 1. Verificación de Autenticación General ---
+// Comprueba si la bandera 'logged_in' de la sesión está activa.
+if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
+    // Si no hay sesión activa, redirige al usuario a la página de login (normalmente la raíz).
+    header("Location: ../../"); // Ajusta la ruta relativa según la ubicación del archivo
+    exit(); // Detiene la ejecución del script
+}
+
+// --- 2. Carga de Datos del Usuario Actual ---
+// Accede a los datos completos del usuario guardados en $_SESSION['usuario_data']
+// durante el proceso de login en op_validar.php.
+if (!isset($_SESSION['usuario_data']) || !is_array($_SESSION['usuario_data'])) {
+    // Si los datos del usuario no están disponibles (situación inusual pero posible),
+    // se considera un error de sesión y se redirige.
+    $_SESSION['error'] = 'Error de sesión. Por favor, inicie sesión de nuevo.';
+    header("Location: ../../"); // Redirige al login
+    exit();
+}
+
+$usuario_actual = $_SESSION['usuario_data']; // Aquí se obtienen todos los datos del usuario actual
+$usuario = $_SESSION['usuario_data'];
+// Verificar si el usuario tiene el permiso 'acceso_admin'.
+// 'usuario_permisos' debería estar disponible en $_SESSION gracias a op_validar.php.
+if (isset($_SESSION['usuario_permisos']) && in_array('acceso_admin', $_SESSION['usuario_permisos'])) {
+    $esAdmin = true; // El usuario tiene el permiso de administrador
+} else {
+    // Si no tiene el permiso 'acceso_admin', redirigir al login.
+    $_SESSION['error'] = 'Acceso denegado. No tienes permisos de administrador.';
+    header("Location: ../"); // Redirige al login o a una página de acceso denegado específica.
+    exit();
+}
+
+// A partir de aquí, el usuario está autenticado y es un administrador.
+// Puedes usar `$usuario_actual['nombre']`, `$usuario_actual['correo']`, etc.,
+// para mostrar información personalizada en el encabezado o en el contenido de la página.
+
+// Ejemplo de uso en el HTML (dentro del <body>):
+/*
+<header class="bg-white shadow-sm">
+    <div class="flex items-center">
+        <i class="fas fa-user-circle"></i>
+        <span><?php echo htmlspecialchars($usuario_actual['nombre']); ?></span>
+        <span><?php echo htmlspecialchars($usuario_actual['rol_nombre']); ?></span>
+        <a href="../../op_logout.php">Cerrar sesión</a>
+    </div>
+</header>
+*/
+
+
+require_once '../../assets/config/db.php';
+
+
+
+
+
+Codigo Validacion por permisos asignados a roles RBAC 
+
+
+Cambiar el acces_admin por el nombre de permiso a usar
+
+// Verificar si el usuario tiene el permiso 'acceso_admin'.
+// 'usuario_permisos' debería estar disponible en $_SESSION gracias a op_validar.php.
+if (isset($_SESSION['usuario_permisos']) && in_array('acceso_admin', $_SESSION['usuario_permisos'])) {
+    $esAdmin = true; // El usuario tiene el permiso de administrador
+} else {
+    // Si no tiene el permiso 'acceso_admin', redirigir al login.
+    $_SESSION['error'] = 'Acceso denegado. No tienes permisos de administrador.';
+    header("Location: ../"); // Redirige al login o a una página de acceso denegado específica.
+    exit();
+}
+
+
+
+Codigo v2 validacion por permisos asignados a roles RBAC 
+
+require_once '../../assets/config/info.php';
+$permisoRequerido = $admin;
+if (isset($_SESSION['usuario_permisos']) && in_array($permisoRequerido, $_SESSION['usuario_permisos'])) {
+    $esAccesoPermitido = true;
+} else {
+    $_SESSION['mensaje'] = [
+        'tipo' => 'error',
+        'texto' => "Acceso denegado. No cuentas con el permiso " . $permisoRequerido . ". Por favor Contacta con tu departamento de IT o administrador de ayudas"
+    ];
+    header("Location: ../");
+    exit();
+}
+
+
+
+require_once '../../assets/config/info.php';
+$permisoRequerido = $op_search_products_movimientos;
+// CAMBIO AQUÍ: En lugar de redirigir, devuelve un JSON de error de permiso
+if (!isset($_SESSION['usuario_permisos']) || !in_array($permisoRequerido, $_SESSION['usuario_permisos'])) {
+    echo json_encode(['success' => false, 'message' => "Acceso denegado. No cuentas con el permiso " . $permisoRequerido . ". Por favor Contacta con tu departamento de IT o administrador de ayudas."]);
+    exit();
+}
+
+
+
+
+// Variables de permisos para 'bodega'
+// Puedes descomentar y usar el bloque 'if' para el permiso específico que necesites en cada archivo.
+
+// if (isset($_SESSION['usuario_permisos']) && in_array($bodega_crear, $_SESSION['usuario_permisos'])) {
+//     $esAdmin = true;
+// } else {
+//     $_SESSION['mensaje'] = [
+//         'tipo' => 'error',
+//         'texto' => "Acceso denegado. No cuentas con el permiso " . $bodega_crear . ". Por favor Contacta con tu departamente de IT o administrador de ayudas"
+//     ];
+//     header("Location: ../");
+//     exit();
+// }
+
+// if (isset($_SESSION['usuario_permisos']) && in_array($bodega_editar, $_SESSION['usuario_permisos'])) {
+//     $esAdmin = true;
+// } else {
+//     $_SESSION['mensaje'] = [
+//         'tipo' => 'error',
+//         'texto' => "Acceso denegado. No cuentas con el permiso " . $bodega_editar . ". Por favor Contacta con tu departamente de IT o administrador de ayudas"
+//     ];
+//     header("Location: ../");
+//     exit();
+// }
+
+// if (isset($_SESSION['usuario_permisos']) && in_array($bodega_eliminar, $_SESSION['usuario_permisos'])) {
+//     $esAdmin = true;
+// } else {
+//     $_SESSION['mensaje'] = [
+//         'tipo' => 'error',
+//         'texto' => "Acceso denegado. No cuentas con el permiso " . $bodega_eliminar . ". Por favor Contacta con tu departamente de IT o administrador de ayudas"
+//     ];
+//     header("Location: ../");
+//     exit();
+// }
+
+// if (isset($_SESSION['usuario_permisos']) && in_array($bodega_listar, $_SESSION['usuario_permisos'])) {
+//     $esAdmin = true;
+// } else {
+//     $_SESSION['mensaje'] = [
+//         'tipo' => 'error',
+//         'texto' => "Acceso denegado. No cuentas con el permiso " . $bodega_listar . ". Por favor Contacta con tu departamente de IT o administrador de ayudas"
+//     ];
+//     header("Location: ../");
+//     exit();
+// }
+
+// if (isset($_SESSION['usuario_permisos']) && in_array($bodega_reportes, $_SESSION['usuario_permisos'])) {
+//     $esAdmin = true;
+// } else {
+//     $_SESSION['mensaje'] = [
+//         'tipo' => 'error',
+//         'texto' => "Acceso denegado. No cuentas con el permiso " . $bodega_reportes . ". Por favor Contacta con tu departamente de IT o administrador de ayudas"
+//     ];
+//     header("Location: ../");
+//     exit();
+// }
+
+// if (isset($_SESSION['usuario_permisos']) && in_array($bodega_reportes_index, $_SESSION['usuario_permisos'])) {
+//     $esAdmin = true;
+// } else {
+//     $_SESSION['mensaje'] = [
+//         'tipo' => 'error',
+//         'texto' => "Acceso denegado. No cuentas con el permiso " . $bodega_reportes_index . ". Por favor Contacta con tu departamente de IT o administrador de ayudas"
+//     ];
+//     header("Location: ../");
+//     exit();
+// }
+
+// Variables de permisos para 'categoria'
+// if (isset($_SESSION['usuario_permisos']) && in_array($categoria_index, $_SESSION['usuario_permisos'])) {
+//     $esAdmin = true;
+// } else {
+//     $_SESSION['mensaje'] = [
+//         'tipo' => 'error',
+//         'texto' => "Acceso denegado. No cuentas con el permiso " . $categoria_index . ". Por favor Contacta con tu departamente de IT o administrador de ayudas"
+//     ];
+//     header("Location: ../");
+//     exit();
+// }
+
+// if (isset($_SESSION['usuario_permisos']) && in_array($op_crear_categoria, $_SESSION['usuario_permisos'])) {
+//     $esAdmin = true;
+// } else {
+//     $_SESSION['mensaje'] = [
+//         'tipo' => 'error',
+//         'texto' => "Acceso denegado. No cuentas con el permiso " . $op_crear_categoria . ". Por favor Contacta con tu departamente de IT o administrador de ayudas"
+//     ];
+//     header("Location: ../");
+//     exit();
+// }
+
+// if (isset($_SESSION['usuario_permisos']) && in_array($op_editar_categoria, $_SESSION['usuario_permisos'])) {
+//     $esAdmin = true;
+// } else {
+//     $_SESSION['mensaje'] = [
+//         'tipo' => 'error',
+//         'texto' => "Acceso denegado. No cuentas con el permiso " . $op_editar_categoria . ". Por favor Contacta con tu departamente de IT o administrador de ayudas"
+//     ];
+//     header("Location: ../");
+//     exit();
+// }
+
+// if (isset($_SESSION['usuario_permisos']) && in_array($op_eliminar_categoria, $_SESSION['usuario_permisos'])) {
+//     $esAdmin = true;
+// } else {
+//     $_SESSION['mensaje'] = [
+//         'tipo' => 'error',
+//         'texto' => "Acceso denegado. No cuentas con el permiso " . $op_eliminar_categoria . ". Por favor Contacta con tu departamente de IT o administrador de ayudas"
+//     ];
+//     header("Location: ../");
+//     exit();
+// }
+
+// Variables de permisos para 'estadisticas'
+// if (isset($_SESSION['usuario_permisos']) && in_array($acceso_estadisticas_index, $_SESSION['usuario_permisos'])) {
+//     $esAdmin = true;
+// } else {
+//     $_SESSION['mensaje'] = [
+//         'tipo' => 'error',
+//         'texto' => "Acceso denegado. No cuentas con el permiso " . $acceso_estadisticas_index . ". Por favor Contacta con tu departamente de IT o administrador de ayudas"
+//     ];
+//     header("Location: ../");
+//     exit();
+// }
+
+// Variables de permisos para 'movimientos'
+// if (isset($_SESSION['usuario_permisos']) && in_array($op_add_movement_products, $_SESSION['usuario_permisos'])) {
+//     $esAdmin = true;
+// } else {
+//     $_SESSION['mensaje'] = [
+//         'tipo' => 'error',
+//         'texto' => "Acceso denegado. No cuentas con el permiso " . $op_add_movement_products . ". Por favor Contacta con tu departamente de IT o administrador de ayudas"
+//     ];
+//     header("Location: ../");
+//     exit();
+// }
+
+// if (isset($_SESSION['usuario_permisos']) && in_array($op_create_movement, $_SESSION['usuario_permisos'])) {
+//     $esAdmin = true;
+// } else {
+//     $_SESSION['mensaje'] = [
+//         'tipo' => 'error',
+//         'texto' => "Acceso denegado. No cuentas con el permiso " . $op_create_movement . ". Por favor Contacta con tu departamente de IT o administrador de ayudas"
+//     ];
+//     header("Location: ../");
+//     exit();
+// }
+
+// if (isset($_SESSION['usuario_permisos']) && in_array($op_delete_movement_product, $_SESSION['usuario_permisos'])) {
+//     $esAdmin = true;
+// } else {
+//     $_SESSION['mensaje'] = [
+//         'tipo' => 'error',
+//         'texto' => "Acceso denegado. No cuentas con el permiso " . $op_delete_movement_product . ". Por favor Contacta con tu departamente de IT o administrador de ayudas"
+//     ];
+//     header("Location: ../");
+//     exit();
+// }
+
+// if (isset($_SESSION['usuario_permisos']) && in_array($op_drop_movement, $_SESSION['usuario_permisos'])) {
+//     $esAdmin = true;
+// } else {
+//     $_SESSION['mensaje'] = [
+//         'tipo' => 'error',
+//         'texto' => "Acceso denegado. No cuentas con el permiso " . $op_drop_movement . ". Por favor Contacta con tu departamente de IT o administrador de ayudas"
+//     ];
+//     header("Location: ../");
+//     exit();
+// }
+
+// if (isset($_SESSION['usuario_permisos']) && in_array($op_get_movement_products, $_SESSION['usuario_permisos'])) {
+//     $esAdmin = true;
+// } else {
+//     $_SESSION['mensaje'] = [
+//         'tipo' => 'error',
+//         'texto' => "Acceso denegado. No cuentas con el permiso " . $op_get_movement_products . ". Por favor Contacta con tu departamente de IT o administrador de ayudas"
+//     ];
+//     header("Location: ../");
+//     exit();
+// }
+
+// if (isset($_SESSION['usuario_permisos']) && in_array($op_search_products_movimientos, $_SESSION['usuario_permisos'])) {
+//     $esAdmin = true;
+// } else {
+//     $_SESSION['mensaje'] = [
+//         'tipo' => 'error',
+//         'texto' => "Acceso denegado. No cuentas con el permiso " . $op_search_products_movimientos . ". Por favor Contacta con tu departamente de IT o administrador de ayudas"
+//     ];
+//     header("Location: ../");
+//     exit();
+// }
+
+// if (isset($_SESSION['usuario_permisos']) && in_array($op_update_movement, $_SESSION['usuario_permisos'])) {
+//     $esAdmin = true;
+// } else {
+//     $_SESSION['mensaje'] = [
+//         'tipo' => 'error',
+//         'texto' => "Acceso denegado. No cuentas con el permiso " . $op_update_movement . ". Por favor Contacta con tu departamente de IT o administrador de ayudas"
+//     ];
+//     header("Location: ../");
+//     exit();
+// }
+
+// Variables de permisos para 'producto'
+// if (isset($_SESSION['usuario_permisos']) && in_array($op_consultar_producto, $_SESSION['usuario_permisos'])) {
+//     $esAdmin = true;
+// } else {
+//     $_SESSION['mensaje'] = [
+//         'tipo' => 'error',
+//         'texto' => "Acceso denegado. No cuentas con el permiso " . $op_consultar_producto . ". Por favor Contacta con tu departamente de IT o administrador de ayudas"
+//     ];
+//     header("Location: ../");
+//     exit();
+// }
+
+// if (isset($_SESSION['usuario_permisos']) && in_array($op_crear_multiples_productos, $_SESSION['usuario_permisos'])) {
+//     $esAdmin = true;
+// } else {
+//     $_SESSION['mensaje'] = [
+//         'tipo' => 'error',
+//         'texto' => "Acceso denegado. No cuentas con el permiso " . $op_crear_multiples_productos . ". Por favor Contacta con tu departamente de IT o administrador de ayudas"
+//     ];
+//     header("Location: ../");
+//     exit();
+// }
+
+// if (isset($_SESSION['usuario_permisos']) && in_array($op_crear_producto, $_SESSION['usuario_permisos'])) {
+//     $esAdmin = true;
+// } else {
+//     $_SESSION['mensaje'] = [
+//         'tipo' => 'error',
+//         'texto' => "Acceso denegado. No cuentas con el permiso " . $op_crear_producto . ". Por favor Contacta con tu departamente de IT o administrador de ayudas"
+//     ];
+//     header("Location: ../");
+//     exit();
+// }
+
+// if (isset($_SESSION['usuario_permisos']) && in_array($op_modificar_producto, $_SESSION['usuario_permisos'])) {
+//     $esAdmin = true;
+// } else {
+//     $_SESSION['mensaje'] = [
+//         'tipo' => 'error',
+//         'texto' => "Acceso denegado. No cuentas con el permiso " . $op_modificar_producto . ". Por favor Contacta con tu departamente de IT o administrador de ayudas"
+//     ];
+//     header("Location: ../");
+//     exit();
+// }
+
+// if (isset($_SESSION['usuario_permisos']) && in_array($op_obtener_producto, $_SESSION['usuario_permisos'])) {
+//     $esAdmin = true;
+// } else {
+//     $_SESSION['mensaje'] = [
+//         'tipo' => 'error',
+//         'texto' => "Acceso denegado. No cuentas con el permiso " . $op_obtener_producto . ". Por favor Contacta con tu departamente de IT o administrador de ayudas"
+//     ];
+//     header("Location: ../");
+//     exit();
+// }
+
+// Variables de permisos para 'proveedores'
+// if (isset($_SESSION['usuario_permisos']) && in_array($op_crear_proveedor, $_SESSION['usuario_permisos'])) {
+//     $esAdmin = true;
+// } else {
+//     $_SESSION['mensaje'] = [
+//         'tipo' => 'error',
+//         'texto' => "Acceso denegado. No cuentas con el permiso " . $op_crear_proveedor . ". Por favor Contacta con tu departamente de IT o administrador de ayudas"
+//     ];
+//     header("Location: ../");
+//     exit();
+// }
+
+// if (isset($_SESSION['usuario_permisos']) && in_array($op_editar_proveedor, $_SESSION['usuario_permisos'])) {
+//     $esAdmin = true;
+// } else {
+//     $_SESSION['mensaje'] = [
+//         'tipo' => 'error',
+//         'texto' => "Acceso denegado. No cuentas con el permiso " . $op_editar_proveedor . ". Por favor Contacta con tu departamente de IT o administrador de ayudas"
+//     ];
+//     header("Location: ../");
+//     exit();
+// }
+
+// if (isset($_SESSION['usuario_permisos']) && in_array($op_eliminar_proveedor, $_SESSION['usuario_permisos'])) {
+//     $esAdmin = true;
+// } else {
+//     $_SESSION['mensaje'] = [
+//         'tipo' => 'error',
+//         'texto' => "Acceso denegado. No cuentas con el permiso " . $op_eliminar_proveedor . ". Por favor Contacta con tu departamente de IT o administrador de ayudas"
+//     ];
+//     header("Location: ../");
+//     exit();
+// }

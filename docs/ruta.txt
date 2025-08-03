@@ -1,0 +1,114 @@
+c:\htdocs\inventario-360
+├── .idx/
+│   └── dev.nix
+├── .vscode/
+│   └── settings.json
+├── README.md
+├── admin/
+│   ├── bodega/
+│   │   ├── crear/
+│   │   │   └── index.php
+│   │   ├── editar/
+│   │   │   └── index.php
+│   │   ├── eliminar/
+│   │   │   └── index.php
+│   │   ├── index.php
+│   │   ├── listar/
+│   │   │   └── index.php
+│   │   └── reportes/
+│   │       ├── index.php
+│   │       └── generar_reporte.php
+│   ├── categoria/
+│   │   ├── index.php
+│   │   ├── op_crear_categoria.php
+│   │   ├── op_editar_categoria.php
+│   │   └── op_eliminar_categoria.php
+│   ├── index.php
+│   ├── movimientos/
+│   │   ├── acciones/
+│   │   │   ├── index.php
+│   │   │   ├── op_crear_movimiento.php
+│   │   │   └── op_listar_movimientos.php
+│   │   ├── crear.php
+│   │   ├── includes/
+│   │   │   ├── funciones.php
+│   │   │   └── validaciones.php
+│   │   └── index.php
+│   ├── producto/
+│   │   ├── index.php
+│   │   ├── op_crear_producto.php
+│   │   ├── op_editar_producto.php
+│   │   ├── op_eliminar_producto.php
+│   │   └── op_listar_productos.php
+│   ├── proveedores/
+│   │   ├── index.php
+│   │   ├── op_crear_proveedor.php
+│   │   ├── op_editar_proveedor.php
+│   │   └── op_eliminar_proveedor.php
+│   ├── rol_permisos/
+│   │   ├── index.php
+│   │   ├── op_crear_permiso.php
+│   │   ├── op_crear_rol.php
+│   │   ├── op_editar_permiso.php
+│   │   ├── op_editar_rol.php
+│   │   ├── op_eliminar_permiso.php
+│   │   ├── op_eliminar_rol.php
+│   │   └── op_get_permisos_rol.php
+│   └── users/
+│       ├── index.php
+│       ├── op_create_user.php
+│       ├── op_drop_user.php
+│       ├── op_update_user.php
+│       └── op_user_info.php
+├── app/
+│   ├── continuar.txt
+│   └── styles.css
+├── assets/
+│   ├── ajax/
+│   │   ├── op_buscar_producto.php
+│   │   ├── op_ingresar_producto.php
+│   │   └── op_validar_stock.php
+│   ├── config/
+│   │   ├── db.php
+│   │   └── config.php
+│   └── database/
+│       ├── Inventario360_RBACv3.sql
+│       ├── Inventario360_RBACv3_insert.sql
+│       └── backup/
+│           └── manual_backup.sql
+├── dashboard/
+│   ├── index.php
+│   └── widgets/
+│       ├── stock_bajo.php
+│       └── ultimos_movimientos.php
+├── docs/
+│   ├── ruta.txt
+│   ├── seguridad.txt
+│   └── usuarios.txt
+├── includes/
+│   ├── header.php
+│   ├── footer.php
+│   └── session.php
+├── index.php
+├── op_logout.php
+├── op_validar.php
+└── users/
+    └── update/
+        └── recovery_password/
+            ├── index.php
+            └── op_reset_password.php
+
+            
+
+admin/proveedores/
+├── index.php              # Vista principal
+├── crear.php              # Formulario de creación
+├── editar.php             # Formulario de edición
+├── ver.php                # Vista detallada
+├── acciones/
+│   ├── crear_proveedor.php  # Lógica para crear
+│   ├── editar_proveedor.php # Lógica para editar
+│   ├── eliminar_proveedor.php # Lógica para eliminar
+│   └── listar_proveedores.php # Lógica para listar
+└── js/
+    └── proveedores.js     # JavaScript específico

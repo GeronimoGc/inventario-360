@@ -1,0 +1,31 @@
+USUARIOS DEL SISTEMA <?php echo $name_corp; ?>
+
+1. ADMINISTRADORES
+   - Usuario: admin@inventario360.com
+   - Contraseña: Admin#2024
+   - Permisos: Acceso total al sistema
+   - Funciones: Gestión de usuarios, configuración del sistema, reportes avanzados
+
+2. SUPERVISORES
+   - Usuario: supervisor@inventario360.com
+   - Contraseña: Sup#2024
+   - Permisos: Acceso a gestión de inventario y reportes
+   - Funciones: Aprobación de movimientos, gestión de productos, reportes básicos
+
+3. OPERADORES
+   - Usuario: operador@inventario360.com
+   - Contraseña: Op#2024
+   - Permisos: Acceso básico al sistema
+   - Funciones: Registro de movimientos, consulta de productos
+
+4. VISUALIZADOR
+   - Usuario: viewer@inventario360.com
+   - Contraseña: View#2024
+   - Permisos: Solo lectura
+   - Funciones: Consulta de productos y movimientos
+
+NOTAS:
+- Todas las contraseñas deben cambiarse en el primer inicio de sesión
+- Los usuarios están sujetos a la política de contraseñas seguras
+- Se recomienda habilitar la autenticación de dos factores
+- Las cuentas se bloquean después de 3 intentos fallidos

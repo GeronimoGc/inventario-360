@@ -1,0 +1,104 @@
+ahora con las de lugar: admin/lugar/lugar_actualizar.php "<?php
+include 'conexion.php';
+
+$stmt = $conexion->prepare("UPDATE lugar SET nombre = ?, descripcion = ?, bodega_id = ? WHERE idlugar = ?");
+$stmt->execute([
+    $_POST['nombre'],
+    $_POST['descripcion'],
+    $_POST['bodega_id'],
+    $_POST['idlugar']
+]);
+
+header("Location: lugar_listar.php");
+"  admin/lugar/lugar_crear.php "<?php
+include 'conexion.php';
+$bodegas = $conexion->query("SELECT idbodega, nombre FROM bodega")->fetchAll(PDO::FETCH_ASSOC);
+?>
+
+<h2>Agregar Lugar</h2>
+<form action="lugar_insertar.php" method="post">
+    Nombre: <input type="text" name="nombre" required><br>
+    Descripción: <textarea name="descripcion"></textarea><br>
+    Bodega:
+    <select name="bodega_id" required>
+        <?php foreach ($bodegas as $b): ?>
+            <option value="<?= $b['idbodega'] ?>"><?= $b['nombre'] ?></option>
+        <?php endforeach; ?>
+    </select><br>
+    <input type="submit" value="Guardar">
+</form>
+"  admin/lugar/lugar_editar.php "<?php
+include 'conexion.php';
+
+$id = $_GET['id'];
+$lugar = $conexion->prepare("SELECT * FROM lugar WHERE idlugar = ?");
+$lugar->execute([$id]);
+$l = $lugar->fetch(PDO::FETCH_ASSOC);
+
+$bodegas = $conexion->query("SELECT idbodega, nombre FROM bodega")->fetchAll(PDO::FETCH_ASSOC);
+?>
+
+<h2>Editar Lugar</h2>
+<form action="lugar_actualizar.php" method="post">
+    <input type="hidden" name="idlugar" value="<?= $l['idlugar'] ?>">
+    Nombre: <input type="text" name="nombre" value="<?= $l['nombre'] ?>" required><br>
+    Descripción: <textarea name="descripcion"><?= $l['descripcion'] ?></textarea><br>
+    Bodega:
+    <select name="bodega_id" required>
+        <?php foreach ($bodegas as $b): ?>
+            <option value="<?= $b['idbodega'] ?>" <?= $b['idbodega'] == $l['bodega_id'] ? 'selected' : '' ?>>
+                <?= $b['nombre'] ?>
+            </option>
+        <?php endforeach; ?>
+    </select><br>
+    <input type="submit" value="Actualizar">
+</form>
+"  admin/lugar/lugar_eliminar.php "<?php
+include 'conexion.php';
+
+$id = $_GET['id'];
+$conexion->prepare("DELETE FROM lugar WHERE idlugar = ?")->execute([$id]);
+
+header("Location: lugar_listar.php");
+"  admin/lugar/lugar_insertar.php "<?php
+include 'conexion.php';
+
+$stmt = $conexion->prepare("INSERT INTO lugar (nombre, descripcion, bodega_id) VALUES (?, ?, ?)");
+$stmt->execute([
+    $_POST['nombre'],
+    $_POST['descripcion'],
+    $_POST['bodega_id']
+]);
+
+header("Location: lugar_listar.php");
+"  admin/lugar/lugar_listar.php "<?php
+include 'conexion.php';
+
+$query = "
+SELECT l.idlugar, l.nombre, l.descripcion, b.nombre AS bodega
+FROM lugar l
+JOIN bodega b ON l.bodega_id = b.idbodega
+";
+$resultado = $conexion->query($query)->fetchAll(PDO::FETCH_ASSOC);
+?>
+
+<h2>Lista de Lugares</h2>
+<a href="lugar_crear.php">Agregar nuevo lugar</a>
+<table border="1">
+    <tr>
+        <th>ID</th><th>Nombre</th><th>Descripción</th><th>Bodega</th><th>Acciones</th>
+    </tr>
+    <?php foreach ($resultado as $fila): ?>
+    <tr>
+        <td><?= $fila['idlugar'] ?></td>
+        <td><?= $fila['nombre'] ?></td>
+        <td><?= $fila['descripcion'] ?></td>
+        <td><?= $fila['bodega'] ?></td>
+        <td>
+            <a href="lugar_editar.php?id=<?= $fila['idlugar'] ?>">Editar</a> |
+            <a href="lugar_eliminar.php?id=<?= $fila['idlugar'] ?>" onclick="return confirm('¿Eliminar este lugar?')">Eliminar</a>
+        </td>
+    </tr>
+    <?php endforeach; ?>
+</table>
+"
