@@ -131,7 +131,7 @@ CREATE TABLE `inventario360_producto` (
   `numero_producto` varchar(50) NOT NULL UNIQUE,
   `nombre` varchar(100) NOT NULL,
   `estado` enum('activo','inactivo','averiado') NOT NULL,
-  `fecha_registro` date NOT NULL DEFAULT,
+  `fecha_registro` date NOT NULL,
   `precio` decimal(10,2) NOT NULL,
   `idcategoria` int(11) UNSIGNED NOT NULL,
   `idbodega` int(11) UNSIGNED NOT NULL,
