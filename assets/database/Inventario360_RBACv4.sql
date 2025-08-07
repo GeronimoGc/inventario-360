@@ -41,13 +41,13 @@ CREATE TABLE `inventario360_rol` (
 -- Estructura de tabla para la tabla `inventario360_usuario`
 --
 CREATE TABLE `inventario360_usuario` (
-  `idusuario` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `nombre` varchar(100) NOT NULL,
   `correo` varchar(100) NOT NULL UNIQUE,
   `contrasenia` varchar(255) NOT NULL,
   `estado` ENUM('activo', 'inactivo', 'eliminado') NOT NULL DEFAULT 'activo', -- Esta línea se agregó en la conversación anterior
   `rol_id` int(11) UNSIGNED NOT NULL,
-  PRIMARY KEY (`idusuario`),
+  PRIMARY KEY (`id`),
   UNIQUE KEY `correo_UNIQUE` (`correo`),
   KEY `fk_usuario_rol_idx` (`rol_id`),
   CONSTRAINT `fk_usuario_rol` FOREIGN KEY (`rol_id`) REFERENCES `inventario360_rol` (`idrol`) ON DELETE CASCADE ON UPDATE CASCADE
@@ -243,7 +243,7 @@ CREATE TABLE `inventario360_registro_actividad` (
   `accion` enum('INSERT','UPDATE','DELETE') NOT NULL,
   `fecha` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `descripcion` text,
-  `usuario_idusuario` int(11) UNSIGNED NOT NULL,
+  `usuario_id` int(11) UNSIGNED NOT NULL,
   `producto_idproducto` int(11) UNSIGNED DEFAULT NULL,
   `proveedor_idproveedor` int(11) UNSIGNED DEFAULT NULL,
   `historial_precios_idhistorial` int(11) UNSIGNED DEFAULT NULL,
@@ -253,7 +253,7 @@ CREATE TABLE `inventario360_registro_actividad` (
   `bodega_idbodega` int(11) UNSIGNED DEFAULT NULL,
   PRIMARY KEY (`idreac`),
   KEY `fecha_idx` (`fecha`),
-  KEY `fk_registro_actividad_usuario1_idx` (`usuario_idusuario`),
+  KEY `fk_registro_actividad_usuario1_idx` (`usuario_id`),
   KEY `fk_registro_actividad_producto1_idx` (`producto_idproducto`),
   KEY `fk_registro_actividad_proveedor1_idx` (`proveedor_idproveedor`),
   KEY `fk_registro_actividad_historial_precios1_idx` (`historial_precios_idhistorial`),
@@ -268,7 +268,7 @@ CREATE TABLE `inventario360_registro_actividad` (
   CONSTRAINT `fk_registro_actividad_lugar1` FOREIGN KEY (`lugar_idlugar`) REFERENCES `inventario360_lugar` (`idlugar`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_registro_actividad_producto1` FOREIGN KEY (`producto_idproducto`) REFERENCES `inventario360_producto` (`idproducto`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_registro_actividad_proveedor1` FOREIGN KEY (`proveedor_idproveedor`) REFERENCES `inventario360_proveedor` (`idproveedor`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_registro_actividad_usuario1` FOREIGN KEY (`usuario_idusuario`) REFERENCES `inventario360_usuario` (`idusuario`) ON DELETE CASCADE ON UPDATE CASCADE -- ¡Modificado a ON DELETE CASCADE!
+  CONSTRAINT `fk_registro_actividad_usuario1` FOREIGN KEY (`usuario_id`) REFERENCES `inventario360_usuario` (`id`) ON DELETE CASCADE ON UPDATE CASCADE -- ¡Modificado a ON DELETE CASCADE!
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Tabla que registra actividades y cambios en el sistema';
 
 -- --------------------------------------------------------
@@ -293,7 +293,7 @@ CREATE TABLE `inventario360_movimientos` (
   KEY `fk_movimientos_tipo_movimiento_idx` (`tipo_movimiento_id`),
   CONSTRAINT `fk_movimientos_bodega_destino` FOREIGN KEY (`bodega_destino_id`) REFERENCES `inventario360_bodega` (`idbodega`),
   CONSTRAINT `fk_movimientos_bodega_origen` FOREIGN KEY (`bodega_origen_id`) REFERENCES `inventario360_bodega` (`idbodega`),
-  CONSTRAINT `fk_movimientos_usuario` FOREIGN KEY (`usuario_id`) REFERENCES `inventario360_usuario` (`idusuario`) ON DELETE CASCADE ON UPDATE CASCADE, -- ¡Modificado a ON DELETE CASCADE!
+  CONSTRAINT `fk_movimientos_usuario` FOREIGN KEY (`usuario_id`) REFERENCES `inventario360_usuario` (`id`) ON DELETE CASCADE ON UPDATE CASCADE, -- ¡Modificado a ON DELETE CASCADE!
   CONSTRAINT `fk_movimientos_tipo_movimiento` FOREIGN KEY (`tipo_movimiento_id`) REFERENCES `inventario360_tipo_movimiento` (`idtipo_movimiento`) ON DELETE RESTRICT ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Tabla que registra los movimientos de productos';
 
