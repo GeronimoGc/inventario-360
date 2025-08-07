@@ -67,12 +67,26 @@ CREATE TABLE `inventario360_permiso` (
   UNIQUE KEY `nombre_UNIQUE` (`nombre`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Tabla que almacena los permisos disponibles en el sistema';
 
+--
+-- Estructura de tabla para la tabla `inventario360_usuario_permiso`
+--
+CREATE TABLE `inventario360_usuario_permiso` (
+  `id` int AUTO_INCREMENT not null,
+  `id_user` INT(11) UNSIGNED NOT NULL,
+  `permiso_id` INT(11) UNSIGNED NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_rol_permiso_permiso_idx` (`permiso_id`),
+  CONSTRAINT `fk_usuario_permiso_usuario` FOREIGN KEY (`id_user`) REFERENCES `inventario360_usuario` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_usuario_permiso_permiso` FOREIGN KEY (`permiso_id`) REFERENCES `inventario360_permiso` (`idpermiso`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Tabla intermedia que relaciona roles con usuarios individuales';
+
 -- --------------------------------------------------------
 
 --
 -- Estructura de tabla para la tabla `inventario360_rol_permiso`
 --
 CREATE TABLE `inventario360_rol_permiso` (
+  `id` int AUTO_INCREMENT not null,
   `rol_id` INT(11) UNSIGNED NOT NULL,
   `permiso_id` INT(11) UNSIGNED NOT NULL,
   PRIMARY KEY (`rol_id`, `permiso_id`),
