@@ -1,3 +1,4 @@
+drop database inventario360;
 -- phpMyAdmin SQL Dump
 -- version 5.1.2
 -- https://www.phpmyadmin.net/
@@ -75,7 +76,6 @@ CREATE TABLE `inventario360_usuario_permiso` (
   `id_user` INT(11) UNSIGNED NOT NULL,
   `permiso_id` INT(11) UNSIGNED NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `fk_rol_permiso_permiso_idx` (`permiso_id`),
   CONSTRAINT `fk_usuario_permiso_usuario` FOREIGN KEY (`id_user`) REFERENCES `inventario360_usuario` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_usuario_permiso_permiso` FOREIGN KEY (`permiso_id`) REFERENCES `inventario360_permiso` (`idpermiso`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Tabla intermedia que relaciona roles con usuarios individuales';
@@ -89,8 +89,7 @@ CREATE TABLE `inventario360_rol_permiso` (
   `id` int AUTO_INCREMENT not null,
   `rol_id` INT(11) UNSIGNED NOT NULL,
   `permiso_id` INT(11) UNSIGNED NOT NULL,
-  PRIMARY KEY (`rol_id`, `permiso_id`),
-  KEY `fk_rol_permiso_permiso_idx` (`permiso_id`),
+  PRIMARY KEY (`id`),
   CONSTRAINT `fk_rol_permiso_rol` FOREIGN KEY (`rol_id`) REFERENCES `inventario360_rol` (`idrol`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_rol_permiso_permiso` FOREIGN KEY (`permiso_id`) REFERENCES `inventario360_permiso` (`idpermiso`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Tabla intermedia que relaciona roles con permisos';
@@ -416,4 +415,4 @@ INSERT IGNORE INTO `inventario360_permiso` (`nombre`, `descripcion`, `estado`) V
 
 
 INSERT IGNORE INTO `inventario360_rol_permiso` (`rol_id`, `permiso_id`)
-SELECT 1, idpermiso FROM `inventario360_permiso` WHERE `estado` = 'activo'
+SELECT 1, idpermiso FROM `inventario360_permiso` WHERE `estado` = 'activo';
